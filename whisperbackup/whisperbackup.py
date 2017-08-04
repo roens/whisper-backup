@@ -83,7 +83,7 @@ def storageBackend(script):
             region = script.args[2]
         else:
             region = "us-east-1"
-        return s3.S3(script.options.bucket, region, script.options.noop)
+        return s3.S3(script.options.bucket, script.options.sse_c_key, region, script.options.noop)
     if script.args[1].lower() == "swift":
         import swift
         return swift.Swift(script.options.bucket, script.options.noop)
@@ -484,6 +484,8 @@ def main():
     options.append(make_option("-c", "--date", type="string",
         default=utc(),
         help="String in ISO-8601 date format. The last backup before this date will be used during the restore.  Default is now or %s." % utc()))
+    options.append(make_option("--sse-c-key", type="string", dest="sse_c_key",
+        help="A base64-encoded encryption key for Amazon S3 to use to encrypt or decrypt the data."))
     choices = ["gz"]
     if snappy is not None:
         choices.append("sz")
